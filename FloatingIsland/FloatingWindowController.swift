@@ -8,12 +8,30 @@
 import Cocoa
 import SwiftUI
 
+// Custom window class that can become key
+class FloatingWindow: NSWindow {
+    override var canBecomeKey: Bool {
+        return true
+    }
+    
+    override var canBecomeMain: Bool {
+        return true
+    }
+}
+
 class FloatingWindowController: NSWindowController {
     private var hostingView: NSHostingView<FloatingIsland>!
+    @Published var isPinned: Bool = false {
+        didSet {
+            print("Controller pin state changed to: \(isPinned)")
+            // Create a new view instance with updated binding
+            updateFloatingIslandView()
+        }
+    }
     
     convenience init() {
-        // Start with zero rect
-        let window = NSWindow(
+        // Use our custom window class
+        let window = FloatingWindow(
             contentRect: .zero,
             styleMask: [.borderless],
             backing: .buffered,
@@ -26,43 +44,82 @@ class FloatingWindowController: NSWindowController {
         window.isOpaque = false
         window.hasShadow = false
         window.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
+        window.acceptsMouseMovedEvents = true  // Enable mouse move events
         
         self.init(window: window)
         
-        // Create the FloatingIsland view
-        let floatingIsland = FloatingIsland()
-        hostingView = NSHostingView(rootView: floatingIsland)
+        // Create initial view
+        updateFloatingIslandView()
         
-        // Get the fitting size from the hosting view
+        // Set initial size
+        updateWindowSize()
+        
+        // Position window at the absolute top
+        positionWindow()
+        
+        // Observe size changes
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(updateWindowSize),
+            name: NSView.frameDidChangeNotification,
+            object: hostingView
+        )
+    }
+    
+    private func positionWindow() {
+        guard let window = self.window, let screen = NSScreen.main else { return }
+        let screenFrame = screen.frame
+        let windowFrame = window.frame
+        let x = screenFrame.midX - windowFrame.width/2
+        let y = screenFrame.maxY - windowFrame.height + 40 // Add offset to account for padding
+        window.setFrameOrigin(NSPoint(x: x, y: y))
+    }
+    
+    @objc private func updateWindowSize() {
         let fittingSize = hostingView.fittingSize
-        print("Fitting size: \(fittingSize)") // Debug print
-        
-        // Set the hosting view size
+        window?.setContentSize(fittingSize)
         hostingView.frame.size = fittingSize
-        
-        // Set the window's content view and size
-        window.contentView = hostingView
-        window.setContentSize(fittingSize)
-        
-        // Position the window
-        if let screen = NSScreen.main {
-            let screenFrame = screen.frame
-            let windowFrame = window.frame
-            let x = screenFrame.midX - windowFrame.width/2
-            let y = screenFrame.maxY - windowFrame.height
-            window.setFrameOrigin(NSPoint(x: x, y: y))
-            
-            // Debug print
-            print("Window frame: \(windowFrame)")
-            print("Screen frame: \(screenFrame)")
-        }
+        positionWindow()
     }
     
     override func showWindow(_ sender: Any?) {
         super.showWindow(sender)
+        updateWindowSize()
     }
     
     func hideWindow() {
         window?.orderOut(nil)
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    var shouldAutoHide: Bool {
+        return !isPinned
+    }
+    
+    private func updateFloatingIslandView() {
+        let floatingIsland = FloatingIsland(isPinned: Binding(
+            get: { [weak self] in
+                return self?.isPinned ?? false
+            },
+            set: { [weak self] newValue in
+                self?.isPinned = newValue
+                print("Setting pin state to: \(newValue)")
+            }
+        ))
+        
+        if hostingView == nil {
+            hostingView = NSHostingView(rootView: floatingIsland)
+            hostingView.autoresizingMask = [.width, .height]
+            hostingView.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+            hostingView.setContentHuggingPriority(.defaultHigh, for: .vertical)
+            hostingView.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+            hostingView.setContentCompressionResistancePriority(.defaultHigh, for: .vertical)
+            window?.contentView = hostingView
+        } else {
+            hostingView.rootView = floatingIsland
+        }
     }
 }

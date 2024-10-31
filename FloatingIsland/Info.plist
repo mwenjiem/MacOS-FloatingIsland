@@ -20,5 +20,13 @@
     <true/>
     <key>NSPrincipalClass</key>
     <string>NSApplication</string>
+    <key>NSNotificationsUsageDescription</key>
+    <string>We need access to notifications to show system events like AirDrop in the floating island.</string>
+    <key>NSSystemExtensionUsageDescription</key>
+    <string>We need system extension access to monitor system events.</key>
+    <key>NSAppleMusicUsageDescription</key>
+    <string>This app needs access to your media to display and control currently playing information.</string>
+    <key>kTCCServiceMediaLibrary</key>
+    <string>This app needs access to your media library.</string>
 </dict>
 </plist> 

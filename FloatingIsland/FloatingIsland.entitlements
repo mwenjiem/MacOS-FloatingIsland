@@ -6,7 +6,9 @@
 	<true/>
 	<key>com.apple.security.window-management</key>
 	<true/>
-	<key>com.apple.security.automation.apple-events</key>
-	<true/>
+	<key>com.apple.security.temporary-exception.mach-lookup.global-name</key>
+	<array>
+		<string>com.apple.mediaremoted</string>
+	</array>
 </dict>
 </plist>

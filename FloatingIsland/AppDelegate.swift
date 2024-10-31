@@ -6,7 +6,6 @@
 //
 
 import Cocoa
-import SwiftUI
 
 class AppDelegate: NSObject, NSApplicationDelegate {
     var statusItem: NSStatusItem!
@@ -40,6 +39,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         guard let controller = floatingWindowController,
               let window = controller.window,
               let screen = NSScreen.main else { return }
+        
+        if controller.isPinned {
+            if !isWindowVisible {
+                isWindowVisible = true
+                controller.showWindow(nil)
+            }
+            return
+        }
         
         let mouseLocation = NSEvent.mouseLocation
         let screenFrame = screen.frame

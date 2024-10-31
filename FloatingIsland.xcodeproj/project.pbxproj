@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		AD0E62432CD4202E00F800A4 /* MediaRemote.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AD0E62422CD4202E00F800A4 /* MediaRemote.framework */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		AD6CB7CA2CD3E7D700FAC30C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -24,6 +28,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		AD0E62422CD4202E00F800A4 /* MediaRemote.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaRemote.framework; path = ../../../../System/Library/PrivateFrameworks/MediaRemote.framework; sourceTree = "<group>"; };
 		AD6CB7B82CD3E7D600FAC30C /* FloatingIsland.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FloatingIsland.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AD6CB7C92CD3E7D700FAC30C /* FloatingIslandTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FloatingIslandTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AD6CB7D32CD3E7D700FAC30C /* FloatingIslandUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FloatingIslandUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -52,6 +57,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AD0E62432CD4202E00F800A4 /* MediaRemote.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -72,12 +78,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		AD0E62412CD4202E00F800A4 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				AD0E62422CD4202E00F800A4 /* MediaRemote.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		AD6CB7AF2CD3E7D600FAC30C = {
 			isa = PBXGroup;
 			children = (
 				AD6CB7BA2CD3E7D600FAC30C /* FloatingIsland */,
 				AD6CB7CC2CD3E7D700FAC30C /* FloatingIslandTests */,
 				AD6CB7D62CD3E7D700FAC30C /* FloatingIslandUITests */,
+				AD0E62412CD4202E00F800A4 /* Frameworks */,
 				AD6CB7B92CD3E7D600FAC30C /* Products */,
 			);
 			sourceTree = "<group>";
@@ -401,6 +416,7 @@
 				DEVELOPMENT_TEAM = CDNCDGY64Z;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
+				FRAMEWORK_SEARCH_PATHS = /System/Library/PrivateFrameworks;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_LSUIElement = NO;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -409,10 +425,16 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = "-F/System/Library/PrivateFrameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.vz.FloatingIsland;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "FloatingIsland/FloatingIsland-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
+				SYSTEM_FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
+				);
 			};
 			name = Debug;
 		};
@@ -430,6 +452,7 @@
 				DEVELOPMENT_TEAM = CDNCDGY64Z;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
+				FRAMEWORK_SEARCH_PATHS = /System/Library/PrivateFrameworks;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_LSUIElement = NO;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -438,10 +461,16 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = "-F/System/Library/PrivateFrameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.vz.FloatingIsland;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "FloatingIsland/FloatingIsland-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
+				SYSTEM_FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks",
+				);
 			};
 			name = Release;
 		};
