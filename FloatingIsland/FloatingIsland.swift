@@ -86,6 +86,15 @@ struct FloatingIsland: View {
     @Binding var isPinned: Bool
     @Binding var isExpanded: Bool
     
+    // Calculate minimized width based on media state
+    private var minimizedWidth: CGFloat {
+        if mediaController.currentMedia != nil {
+            return 340 // Width when media is playing
+        } else {
+            return 100 // Smaller width when no media
+        }
+    }
+    
     var body: some View {
         ZStack {
             if isExpanded {
@@ -93,7 +102,7 @@ struct FloatingIsland: View {
                     .padding(EdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 16))
             } else {
                 MinimizedView(mediaController: mediaController)
-                    .padding(.vertical, 16) // Only add vertical padding in minimized state
+                    .padding(.vertical, 16)
             }
             
             if isExpanded {
@@ -102,10 +111,10 @@ struct FloatingIsland: View {
         }
         .padding(.top, isExpanded ? 60 : 0)
         .frame(
-            width: isExpanded ? 300 : 340,
-            height: isExpanded ? 160 : 39
+            width: isExpanded ? 300 : minimizedWidth,
+            height: isExpanded ? 160 : 38
         )
-        .background(Color.black.opacity(0.5))
+        .background(Color.black.opacity(1.0))
         .clipShape(Rectangle())
         .onTapGesture {
             withAnimation(.spring()) {
@@ -138,12 +147,17 @@ private struct MinimizedView: View {
     var body: some View {
         HStack {
             if let media = mediaController.currentMedia {
-                ArtworkView(artwork: media.artwork, size: 40)
-                    .padding(.leading, 16) // Add padding to move from edge
-                Spacer() // Push artwork to the left
+                ArtworkView(artwork: media.artwork, size: 30)
+                    .padding(.leading, 16)
+                Spacer()
+            } else {
+                Circle()
+                    .fill(Color.green)
+                    .frame(width: 10, height: 10)
+                    .padding(.horizontal, 16)
             }
         }
-        .frame(maxWidth: .infinity) // Ensure HStack fills available width
+        .frame(maxWidth: .infinity)
     }
 }
 
