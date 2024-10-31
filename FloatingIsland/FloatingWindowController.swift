@@ -23,8 +23,13 @@ class FloatingWindowController: NSWindowController {
     private var hostingView: NSHostingView<FloatingIsland>!
     @Published var isPinned: Bool = false {
         didSet {
-            print("Controller pin state changed to: \(isPinned)")
             updateFloatingIslandView()
+        }
+    }
+    @Published var isExpanded: Bool = false {
+        didSet {
+            updateFloatingIslandView()
+            updateWindowSize()
         }
     }
     
@@ -75,7 +80,7 @@ class FloatingWindowController: NSWindowController {
         let screenFrame = screen.frame
         let windowFrame = window.frame
         let x = screenFrame.midX - windowFrame.width/2
-        let y = screenFrame.maxY - windowFrame.height + 40 // Add offset to account for padding
+        let y = screenFrame.maxY - windowFrame.height // Add offset to account for padding
         window.setFrameOrigin(NSPoint(x: x, y: y))
     }
     
@@ -88,11 +93,13 @@ class FloatingWindowController: NSWindowController {
     
     override func showWindow(_ sender: Any?) {
         super.showWindow(sender)
+        isExpanded = true
         updateWindowSize()
     }
     
     func hideWindow() {
-        window?.orderOut(nil)
+        isExpanded = false
+        updateWindowSize()
     }
     
     deinit {
@@ -104,15 +111,16 @@ class FloatingWindowController: NSWindowController {
     }
     
     private func updateFloatingIslandView() {
-        let floatingIsland = FloatingIsland(isPinned: Binding(
-            get: { [weak self] in
-                return self?.isPinned ?? false
-            },
-            set: { [weak self] newValue in
-                self?.isPinned = newValue
-                print("Setting pin state to: \(newValue)")
-            }
-        ))
+        let floatingIsland = FloatingIsland(
+            isPinned: Binding(
+                get: { [weak self] in self?.isPinned ?? false },
+                set: { [weak self] in self?.isPinned = $0 }
+            ),
+            isExpanded: Binding(
+                get: { [weak self] in self?.isExpanded ?? false },
+                set: { [weak self] in self?.isExpanded = $0 }
+            )
+        )
         
         if hostingView == nil {
             hostingView = NSHostingView(rootView: floatingIsland)

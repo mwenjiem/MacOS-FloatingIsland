@@ -26,6 +26,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         floatingWindowController = FloatingWindowController()
         NSApp.setActivationPolicy(.accessory)
+        
+        // Show window initially in minimized state
+        floatingWindowController?.window?.orderFront(nil)
+        floatingWindowController?.isExpanded = false
+        
         startMouseTracking()
     }
     
@@ -41,10 +46,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
               let screen = NSScreen.main else { return }
         
         if controller.isPinned {
-            if !isWindowVisible {
-                isWindowVisible = true
-                controller.showWindow(nil)
-            }
+            controller.isExpanded = true
             return
         }
         
@@ -60,15 +62,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let isInWindowFrame = window.frame.contains(mouseLocation)
         
         if (distanceFromTop <= triggerHeight && isInMiddleZone) || isInWindowFrame {
-            if !isWindowVisible {
-                isWindowVisible = true
-                controller.showWindow(nil)
-            }
-        } else if !isInWindowFrame {
-            if isWindowVisible {
-                isWindowVisible = false
-                controller.hideWindow()
-            }
+            controller.isExpanded = true
+        } else {
+            controller.isExpanded = false
         }
     }
     
