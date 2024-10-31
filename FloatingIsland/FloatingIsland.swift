@@ -107,7 +107,7 @@ struct FloatingIsland: View {
                     }
                     
                     // Media Info and Controls Container
-                    VStack(alignment: .leading, spacing: 4) {
+                    VStack(alignment: .center, spacing: 4) {
                         // Title and Artist
                         VStack(alignment: .center, spacing: 4) {
                             Text(media.title)

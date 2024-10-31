@@ -24,13 +24,11 @@ class FloatingWindowController: NSWindowController {
     @Published var isPinned: Bool = false {
         didSet {
             print("Controller pin state changed to: \(isPinned)")
-            // Create a new view instance with updated binding
             updateFloatingIslandView()
         }
     }
     
     convenience init() {
-        // Use our custom window class
         let window = FloatingWindow(
             contentRect: .zero,
             styleMask: [.borderless],
@@ -40,30 +38,36 @@ class FloatingWindowController: NSWindowController {
         
         window.level = .statusBar
         window.backgroundColor = .clear
-        window.isMovableByWindowBackground = true
+        window.isMovableByWindowBackground = false  // Disable window dragging
         window.isOpaque = false
         window.hasShadow = false
         window.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
-        window.acceptsMouseMovedEvents = true  // Enable mouse move events
+        window.acceptsMouseMovedEvents = true
         
         self.init(window: window)
         
-        // Create initial view
         updateFloatingIslandView()
-        
-        // Set initial size
         updateWindowSize()
-        
-        // Position window at the absolute top
         positionWindow()
         
-        // Observe size changes
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(updateWindowSize),
             name: NSView.frameDidChangeNotification,
             object: hostingView
         )
+        
+        // Add observer for screen changes to keep window centered
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(screenParametersDidChange),
+            name: NSApplication.didChangeScreenParametersNotification,
+            object: nil
+        )
+    }
+    
+    @objc private func screenParametersDidChange() {
+        positionWindow()
     }
     
     private func positionWindow() {
