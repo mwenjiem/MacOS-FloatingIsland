@@ -2,41 +2,82 @@
 
 A Dynamic Island-inspired interface element for macOS, bringing the innovative iOS feature to your Mac desktop.
 
-## Overview
-
-macOS Floating Island recreates the seamless, interactive notification and status display experience of iOS's Dynamic Island for the macOS environment. It provides a sleek, non-intrusive way to view and interact with system notifications, media controls, and active background processes.
-
 ## Features
 
 - 🎵 Media playback controls and Now Playing information
+- 🖥️ Native macOS integration
+- 📱 iOS Dynamic Island-inspired design
+- 🔄 Real-time updates
+
+## Installation
+
+### Prerequisites
+
+- macOS version 11.0 or later
+- Xcode 13+ (if compiling from source)
+
+### Installation Options
+
+#### Option 1: Compile from Source
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/macos-floating-island.git
+   cd macos-floating-island
+   ```
+2. Open the project in Xcode:
+   ```bash
+   open FloatingIsland.xcodeproj
+   ```
+3. Build and run the project in Xcode
+
+#### Option 2: Direct Installation
+
+1. Download the pre-built `FloatingIsland.app`
+2. Move it to your Applications folder
+
+### Security Notes
+
+Since the app is currently unsigned, you may encounter security warnings. To resolve:
+
+1. Right-click the app and select "Open"
+2. Click "Open" in the security dialog
+3. Alternatively:
+   - Go to System Preferences → Security & Privacy → General
+   - Click "Open Anyway"
 
 ## Usage
-Option 1
-1. Compile the project in Xcode by opening the FloatingIsland.xcodeproj file
-2. Run the app
 
-Option 2
-I checked in an unsigned executable FloatingIsland.app. Run this directly if you don't want to compile the project.
-Note: When users try to run an unsigned app, they'll see security warnings and will need to:
+### Interface Modes
 
-Right-click the app and select "Open"
-Click "Open" in the security dialog
-Or go to System Preferences → Security & Privacy → General → Click "Open Anyway"
-
-### Collapsed View
+#### Collapsed View
 ![Collapsed View](screenshots/collapsed.png)
-### Expanded View
+- Minimalist display showing essential information
+- Hover cursor over the top of screen to expand
+
+#### Expanded View
 ![Expanded View](screenshots/expanded.png)
+- Full-featured control interface
+
+## Contributing
+
+Contributions are welcome! Here's how you can help:
+
+1. Fork the repository
+2. Create a feature branch
+3. Submit a pull request
+
+## Known Issues
+
+- [Create an issue](https://github.com/yourusername/macos-floating-island/issues) if you encounter any problems
+
+## Roadmap
+
+- [ ] Improve animation
+- [ ] Additional notification types support
+- [ ] keyboard shortcuts
+- [ ] Integration with more tools
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Acknowledgments
-
-- Inspired by Apple's Dynamic Island on iOS
-- Built with SwiftUI and AppKit
-
----
-
-Made with ❤️ for the macOS community
