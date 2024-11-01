@@ -6,7 +6,7 @@
 	<dict>
 		<key>Resources/Info.plist</key>
 		<data>
-		NRwgWLCzEwcyE6DLs44Bdqckd7k=
+		ObVSRT4dStjpBZw8IR0xqPMAuLY=
 		</data>
 	</dict>
 	<key>files2</key>
@@ -15,7 +15,7 @@
 		<dict>
 			<key>cdhash</key>
 			<data>
-			ZOeggtK9cVwB2+vnpNilIaD0B5g=
+			Ac/jRqLblnH3M8/qcnVuMaIlVDM=
 			</data>
 			<key>requirement</key>
 			<string>identifier "FloatingIsland.debug" and anchor apple generic and certificate leaf[subject.CN] = "Apple Development: mwenjiem@gmail.com (BJ4ZAJ644C)" and certificate 1[field.1.2.840.113635.100.6.2.1] /* exists */</string>
@@ -33,7 +33,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			y0HjssukhGzFN1gSwRkD5EFDEEnZxmR/9P8HSL2TUKQ=
+			3aQG9SE91PvkcVUbtN1L4IzRSvzIcRrPKWYNwXVP2jA=
 			</data>
 		</dict>
 	</dict>

@@ -45,7 +45,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let distanceFromTop = screenFrame.maxY - mouseLocation.y
         
         let centerX = screenFrame.midX
-        let tolerance = screenFrame.width * 0.3
+        let tolerance = 170.0
         let isInMiddleZone = (mouseLocation.x > centerX - tolerance) && 
                             (mouseLocation.x < centerX + tolerance)
         
