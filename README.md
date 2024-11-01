@@ -1,9 +1,3 @@
-I'll help you create a README.md file for your macOS Floating Island project.
-
-
-
-
-
 # macOS Floating Island
 
 A Dynamic Island-inspired interface element for macOS, bringing the innovative iOS feature to your Mac desktop.
