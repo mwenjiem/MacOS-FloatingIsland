@@ -14,11 +14,11 @@ struct CalendarTile: View, TileProtocol {
     private let eventStore = EKEventStore()
     
     static func getWidth() -> CGFloat {
-        200
+        170
     }
     
     static func getMinHeight() -> CGFloat {
-        160
+        140
     }
     
     var body: some View {
@@ -40,8 +40,8 @@ struct CalendarTile: View, TileProtocol {
                         .padding(.horizontal)
                 } else {
                     ScrollView {
-                        VStack(alignment: .leading, spacing: 12) {
-                            ForEach(events.prefix(5), id: \.eventIdentifier) { event in
+                        VStack(alignment: .leading, spacing: 8) {
+                            ForEach(Array(events.prefix(5).enumerated()), id: \.offset) { index, event in
                                 EventRow(event: event)
                             }
                         }
@@ -57,7 +57,6 @@ struct CalendarTile: View, TileProtocol {
                 .padding(.horizontal)
             }
         }
-        .padding(.vertical)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.black.opacity(1.0))
         .onAppear {
@@ -171,3 +170,94 @@ extension View {
         }
     }
 }
+
+#if DEBUG
+struct CalendarTile_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            // Preview with no calendar access
+            CalendarTile()
+                .frame(width: CalendarTile.getWidth(), height: CalendarTile.getMinHeight())
+                .previewDisplayName("No Access")
+            
+            // Preview with calendar access but no events
+            MockCalendarTile(hasAccess: true, events: [])
+                .frame(width: CalendarTile.getWidth(), height: CalendarTile.getMinHeight())
+                .previewDisplayName("No Events")
+            
+            // Preview with calendar access and events
+            MockCalendarTile(hasAccess: true, events: mockEvents)
+                .frame(width: CalendarTile.getWidth(), height: CalendarTile.getMinHeight())
+                .previewDisplayName("With Events")
+        }
+        .background(Color.black)
+    }
+    
+    // Mock events for preview
+    static var mockEvents: [EKEvent] {
+        let eventStore = EKEventStore()
+        let event1 = EKEvent(eventStore: eventStore)
+        event1.title = "Team Meeting"
+        event1.startDate = Date()
+        event1.location = "Conference Room A"
+        
+        let event2 = EKEvent(eventStore: eventStore)
+        event2.title = "Lunch with John"
+        event2.startDate = Date().addingTimeInterval(3600 * 2)
+        event2.location = "Cafe Downtown"
+        
+        let event3 = EKEvent(eventStore: eventStore)
+        event3.title = "Project Deadline"
+        event3.startDate = Date().addingTimeInterval(3600 * 24)
+        
+        return [event1, event2, event3]
+    }
+}
+
+// Mock CalendarTile for preview
+private struct MockCalendarTile: View {
+    let hasAccess: Bool
+    let events: [EKEvent]
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Image(systemName: "calendar")
+                    .foregroundColor(.white)
+                Text("Upcoming Events")
+                    .font(.headline)
+                    .foregroundColor(.white)
+            }
+            .padding(.horizontal)
+            
+            if hasAccess {
+                if events.isEmpty {
+                    Text("No upcoming events")
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                        .padding(.horizontal)
+                } else {
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 12) {
+                            ForEach(Array(events.enumerated()), id: \.offset) { index, event in
+                                EventRow(event: event)
+                            }
+                        }
+                        .padding(.horizontal)
+                    }
+                }
+            } else {
+                Button("Grant Calendar Access") {
+                    // No-op for preview
+                }
+                .buttonStyle(.plain)
+                .foregroundColor(.blue)
+                .padding(.horizontal)
+            }
+        }
+        .padding(.vertical)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.black.opacity(1.0))
+    }
+}
+#endif

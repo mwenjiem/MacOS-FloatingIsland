@@ -12,7 +12,7 @@ struct PlayerControlTile: View, TileProtocol {
             } else {
                 NoMediaView()
             }
-        }
+        }.padding(EdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 16))
     }
     
     static func getWidth() -> CGFloat {
@@ -174,3 +174,79 @@ private struct ProgressBar: View {
         }
     }
 }
+
+#if DEBUG
+struct PlayerControlTile_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            // Preview with no media playing
+            PlayerControlTile(
+                mediaController: MockMediaController(hasMedia: false),
+                height: PlayerControlTile.getMinHeight()
+            )
+            .previewDisplayName("No Media")
+            
+            // Preview with media playing
+            PlayerControlTile(
+                mediaController: MockMediaController(
+                    hasMedia: true,
+                    isPlaying: true,
+                    title: "Never Gonna Give You Up",
+                    artist: "Rick Astley",
+                    currentPosition: 135,
+                    duration: 213
+                ),
+                height: PlayerControlTile.getMinHeight()
+            )
+            .previewDisplayName("Playing")
+            
+            // Preview with media paused
+            PlayerControlTile(
+                mediaController: MockMediaController(
+                    hasMedia: true,
+                    isPlaying: false,
+                    title: "Bohemian Rhapsody",
+                    artist: "Queen",
+                    currentPosition: 45,
+                    duration: 354
+                ),
+                height: PlayerControlTile.getMinHeight()
+            )
+            .previewDisplayName("Paused")
+        }
+        .frame(width: PlayerControlTile.getWidth())
+        .background(Color.black)
+    }
+}
+
+// Mock MediaController for previews
+private class MockMediaController: MediaController {
+    init(
+        hasMedia: Bool = false,
+        isPlaying: Bool = false,
+        title: String? = nil,
+        artist: String? = nil,
+        currentPosition: TimeInterval = 0,
+        duration: TimeInterval = 0
+    ) {
+        super.init()
+        self.title = hasMedia ? title : nil
+        self.artist = artist
+        self.isPlaying = isPlaying
+        self.currentPosition = currentPosition
+        self.duration = duration
+    }
+    
+    override func togglePlayPause() {
+        // No-op for preview
+    }
+    
+    override func nextTrack() {
+        // No-op for preview
+    }
+    
+    override func previousTrack() {
+        // No-op for preview
+    }
+}
+#endif

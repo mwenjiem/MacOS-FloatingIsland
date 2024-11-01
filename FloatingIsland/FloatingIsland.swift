@@ -11,6 +11,7 @@ struct FloatingIsland: View {
     @Binding var isPinned: Bool
     @Binding var isExpanded: Bool
     @StateObject private var mediaController = MediaController()
+    @State private var showingSettings = false
 
     // Calculate minimized width based on media state
     private var minimizedWidth: CGFloat {
@@ -26,21 +27,17 @@ struct FloatingIsland: View {
     }
     
     private var expandedHeight: CGFloat {
-        return max(PlayerControlTile.getMinHeight(), CalendarTile.getMinHeight())
+        return max(PlayerControlTile.getMinHeight(), CalendarTile.getMinHeight()) + 32
     }
     
     var body: some View {
         ZStack {
             if isExpanded {
-                ExpandedView(mediaController: mediaController, height: expandedHeight)
-                    .padding(EdgeInsets(top: 16, leading: 32, bottom: 16, trailing: 16))
+                ExpandedView(mediaController: mediaController, height: expandedHeight, isPinned: $isPinned, isExpanded: $isExpanded)
+                    .padding(EdgeInsets(top: 8, leading: 0, bottom: 16, trailing: 16))
             } else {
                 MinimizedView(mediaController: mediaController)
                     .padding(.vertical, 16)
-            }
-            
-            if isExpanded {
-                PinButton(isPinned: $isPinned)
             }
         }
         .padding(.top, isExpanded ? 20 : 0)
@@ -62,11 +59,39 @@ struct FloatingIsland: View {
 private struct ExpandedView: View {
     @ObservedObject var mediaController: MediaController
     var height: CGFloat
+    @Binding var isPinned: Bool
+    @Binding var isExpanded: Bool
     
     var body: some View {
-        HStack(spacing: 16) {
-            CalendarTile()
-            PlayerControlTile(mediaController: mediaController, height: height)
+        VStack {
+            HStack {
+                Spacer()
+                Button(action: {
+                    NSApplication.shared.terminate(nil)
+                }) {
+                    Image(systemName: "power")
+                        .foregroundColor(.gray)
+                        .frame(width: 16, height: 16)
+                }
+                .buttonStyle(.plain)
+            }
+            HStack(spacing: 0) {
+                CalendarTile()
+                PlayerControlTile(mediaController: mediaController, height: height)
+            }.padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 16))
+            HStack {
+                Spacer()
+                Button(action: {
+                    withAnimation {
+                        isPinned.toggle()
+                    }
+                }) {
+                    Image(systemName: isPinned ? "pin.fill" : "pin")
+                        .foregroundColor(isPinned ? .white : .gray)
+                        .frame(width: 16, height: 16)
+                }
+                .buttonStyle(.plain)
+            }
         }
     }
 }
@@ -77,7 +102,7 @@ private struct MinimizedView: View {
     
     var body: some View {
         HStack {
-            if let title = mediaController.title {
+            if let _ = mediaController.title {
                 ArtworkView(artwork: mediaController.artwork, size: 30)
                     .padding(.leading, 16)
                 Spacer()
@@ -91,31 +116,6 @@ private struct MinimizedView: View {
             }
         }
         .frame(maxWidth: .infinity)
-    }
-}
-
-// Pin button view
-private struct PinButton: View {
-    @Binding var isPinned: Bool
-    
-    var body: some View {
-        VStack {
-            Spacer()
-            HStack {
-                Spacer()
-                Button(action: {
-                    withAnimation {
-                        isPinned.toggle()
-                    }
-                }) {
-                    Image(systemName: isPinned ? "pin.fill" : "pin")
-                        .foregroundColor(isPinned ? .white : .gray)
-                        .frame(width: 16, height: 16)
-                }
-                .buttonStyle(.plain)
-                .padding(16)
-            }
-        }
     }
 }
 
@@ -199,3 +199,40 @@ private struct RotatingDisc: View {
             }
     }
 }
+
+#if DEBUG
+struct FloatingIsland_Previews: PreviewProvider {
+    static var previews: some View {
+        // Preview for expanded state
+        FloatingIsland(
+            isPinned: .constant(false),
+            isExpanded: .constant(true)
+        )
+        .frame(width: 600, height: 300)
+        .previewDisplayName("Expanded")
+        
+        // Preview for minimized state
+        FloatingIsland(
+            isPinned: .constant(false),
+            isExpanded: .constant(false)
+        )
+        .frame(width: 340, height: 38)
+        .previewDisplayName("Minimized")
+    }
+}
+
+// Preview helper for ExpandedView
+struct ExpandedView_Previews: PreviewProvider {
+    static var previews: some View {
+        ExpandedView(
+            mediaController: MediaController(),
+            height: 160,
+            isPinned: .constant(false),
+            isExpanded: .constant(true)
+        )
+        .frame(width: 600)
+        .background(Color.black)
+        .previewDisplayName("Expanded View")
+    }
+}
+#endif
