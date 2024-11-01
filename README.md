@@ -24,9 +24,9 @@ Click "Open" in the security dialog
 Or go to System Preferences → Security & Privacy → General → Click "Open Anyway"
 
 ### Collapsed View
-![Collapsed View](screenshots/Collapsed.png)
+![Collapsed View](screenshots/collapsed.png)
 ### Expanded View
-![Expanded View](screenshots/Expanded.png)
+![Expanded View](screenshots/expanded.png)
 
 ## License
 
