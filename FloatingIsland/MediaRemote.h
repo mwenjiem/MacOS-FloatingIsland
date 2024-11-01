@@ -9,6 +9,8 @@ extern NSString * const kMRMediaRemoteNowPlayingApplicationIsPlayingKey;
 extern NSString * const kMRMediaRemoteNowPlayingApplicationBundleIdentifierKey;
 extern NSString * const kMRMediaRemoteNowPlayingTrackTitleKey;
 extern NSString * const kMRMediaRemoteNowPlayingArtistNameKey;
+extern NSString * const kMRMediaRemoteNowPlayingPlaybackPositionKey;
+extern NSString * const kMRMediaRemoteNowPlayingDurationKey;
 
 // Block type definitions
 typedef void (^MRMediaRemoteGetNowPlayingInfoCompletion)(NSDictionary * _Nullable info);
