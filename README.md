@@ -23,9 +23,10 @@ Right-click the app and select "Open"
 Click "Open" in the security dialog
 Or go to System Preferences → Security & Privacy → General → Click "Open Anyway"
 
-
-![Collapsed View](screenshots/collapsed.png)
-![Expanded View](screenshots/expanded.png)
+### Collapsed View
+![Collapsed View](screenshots/Collapsed.png)
+### Expanded View
+![Expanded View](screenshots/Expanded.png)
 
 ## License
 
