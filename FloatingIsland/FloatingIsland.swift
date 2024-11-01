@@ -99,7 +99,7 @@ struct FloatingIsland: View {
         ZStack {
             if isExpanded {
                 ExpandedView(mediaController: mediaController)
-                    .padding(EdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 16))
+                    .padding(EdgeInsets(top: 16, leading: 32, bottom: 16, trailing: 16))
             } else {
                 MinimizedView(mediaController: mediaController)
                     .padding(.vertical, 16)
@@ -109,13 +109,13 @@ struct FloatingIsland: View {
                 PinButton(isPinned: $isPinned)
             }
         }
-        .padding(.top, isExpanded ? 60 : 0)
+        .padding(.top, isExpanded ? 20 : 0)
         .frame(
             width: isExpanded ? 300 : minimizedWidth,
-            height: isExpanded ? 160 : 38
+            height: isExpanded ? 120 : 38
         )
         .background(Color.black.opacity(1.0))
-        .clipShape(Rectangle())
+        .clipShape(CustomRoundedShape())
         .onTapGesture {
             withAnimation(.spring()) {
                 isExpanded.toggle()
@@ -300,8 +300,66 @@ private struct PinButton: View {
                         .frame(width: 16, height: 16)
                 }
                 .buttonStyle(.plain)
-                .padding(8)
+                .padding(16)
             }
         }
+    }
+}
+
+// Add this custom shape
+struct CustomRoundedShape: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        let cornerRadius: CGFloat = 8
+        
+        // Top left - inward curve
+        path.move(to: CGPoint(x: rect.minX, y: rect.minY))
+        path.addQuadCurve(
+            to: CGPoint(x: rect.minX + cornerRadius, y: rect.minY + cornerRadius),
+            control: CGPoint(x: rect.minX + cornerRadius, y: rect.minY)
+        )
+        
+        // Left edge
+        path.addLine(to: CGPoint(x: rect.minX + cornerRadius, y: rect.maxY-cornerRadius))
+        
+        // Bottom left - regular corner
+        path.addQuadCurve(
+            to: CGPoint(x: rect.minX + 2*cornerRadius, y: rect.maxY),
+            control: CGPoint(x: rect.minX + cornerRadius, y: rect.maxY)
+        )
+        
+        // Bottom edge
+        path.addLine(to: CGPoint(x: rect.maxX - cornerRadius*2, y: rect.maxY))
+        
+        // Bottom right - regular corner
+        path.addQuadCurve(
+            to: CGPoint(x: rect.maxX - cornerRadius, y: rect.maxY - cornerRadius),
+            control: CGPoint(x: rect.maxX - cornerRadius, y: rect.maxY)
+        )
+        
+        // Right edge
+        path.addLine(to: CGPoint(x: rect.maxX - cornerRadius, y: rect.minY + cornerRadius))
+        
+        // Top right - inward curve
+        path.addQuadCurve(
+            to: CGPoint(x: rect.maxX, y: rect.minY),
+            control: CGPoint(x: rect.maxX - cornerRadius, y: rect.minY)
+        )
+        
+        // Top edge
+        path.addLine(to: CGPoint(x: rect.minX, y: rect.minY))
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        // Left edge
+        path.addLine(to: CGPoint(x: rect.minX, y: rect.minY))
+        
+        return path
     }
 }
