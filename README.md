@@ -11,9 +11,21 @@ macOS Floating Island recreates the seamless, interactive notification and statu
 - 🎵 Media playback controls and Now Playing information
 
 ## Usage
+Option 1
+1. Compile the project in Xcode by opening the FloatingIsland.xcodeproj file
+2. Run the app
 
-[Collapsed View](screenshots/collapsed.png)
-[Expanded View](screenshots/expanded.png)
+Option 2
+I checked in an unsigned executable FloatingIsland.app. Run this directly if you don't want to compile the project.
+Note: When users try to run an unsigned app, they'll see security warnings and will need to:
+
+Right-click the app and select "Open"
+Click "Open" in the security dialog
+Or go to System Preferences → Security & Privacy → General → Click "Open Anyway"
+
+
+![Collapsed View](screenshots/collapsed.png)
+![Expanded View](screenshots/expanded.png)
 
 ## License
 

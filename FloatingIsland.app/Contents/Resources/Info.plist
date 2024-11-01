@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleIdentifier</key>
+    <string>com.vz.FloatingIsland</string>
+    <key>CFBundleName</key>
+    <string>FloatingIsland</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleShortVersionString</key>
+    <string>1.0</string>
+    <key>CFBundleVersion</key>
+    <string>1</string>
+    <key>LSMinimumSystemVersion</key>
+    <string>$(MACOSX_DEPLOYMENT_TARGET)</string>
+    <key>LSUIElement</key>
+    <false/>
+    <key>NSHighResolutionCapable</key>
+    <true/>
+    <key>NSPrincipalClass</key>
+    <string>NSApplication</string>
+    <key>NSNotificationsUsageDescription</key>
+    <string>We need access to notifications to show system events like AirDrop in the floating island.</string>
+    <key>NSSystemExtensionUsageDescription</key>
+    <string>We need system extension access to monitor system events.</key>
+    <key>NSAppleMusicUsageDescription</key>
+    <string>This app needs access to your media to display and control currently playing information.</string>
+    <key>kTCCServiceMediaLibrary</key>
+    <string>This app needs access to your media library.</string>
+</dict>
+</plist> 
