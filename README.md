@@ -1,5 +1,6 @@
 # macOS Floating Island
 
+![Expanded View](screenshots/demo.gif)
 A Dynamic Island-inspired interface element for macOS, bringing the innovative iOS feature to your Mac desktop.
 
 ## Features
@@ -46,18 +47,6 @@ Since the app is currently unsigned, you may encounter security warnings. To res
    - Go to System Preferences → Security & Privacy → General
    - Click "Open Anyway"
 
-## Usage
-
-### Interface Modes
-
-#### Collapsed View
-![Collapsed View](screenshots/collapsed.png)
-- Minimalist display showing essential information
-- Hover cursor over the top of screen to expand
-
-#### Expanded View
-![Expanded View](screenshots/expanded.png)
-- Full-featured control interface
 
 ## Contributing
 
@@ -73,8 +62,7 @@ Contributions are welcome! Here's how you can help:
 
 ## Roadmap
 
-- [ ] Improve animation
-- [ ] Additional notification types support
+- [ ] Animation
 - [ ] keyboard shortcuts
 - [ ] Integration with more tools
 
