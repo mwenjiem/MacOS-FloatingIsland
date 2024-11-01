@@ -8,22 +8,12 @@
 import Cocoa
 
 class AppDelegate: NSObject, NSApplicationDelegate {
-    var statusItem: NSStatusItem!
     var floatingWindowController: FloatingWindowController?
     var mouseTrackingTimer: Timer?
     let triggerHeight: CGFloat = 30
     var isWindowVisible = false
     
     func applicationDidFinishLaunching(_ notification: Notification) {
-        statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-        if let button = statusItem.button {
-            button.title = "🏝️"
-            
-            let menu = NSMenu()
-            menu.addItem(NSMenuItem(title: "Quit", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
-            statusItem.menu = menu
-        }
-        
         floatingWindowController = FloatingWindowController()
         NSApp.setActivationPolicy(.accessory)
         

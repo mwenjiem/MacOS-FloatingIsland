@@ -419,6 +419,7 @@
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = /System/Library/PrivateFrameworks;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = FloatingIsland/Info.plist;
 				INFOPLIST_KEY_LSUIElement = NO;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -457,6 +458,7 @@
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = /System/Library/PrivateFrameworks;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = FloatingIsland/Info.plist;
 				INFOPLIST_KEY_LSUIElement = NO;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (

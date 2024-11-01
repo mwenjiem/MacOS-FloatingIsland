@@ -22,11 +22,11 @@ struct FloatingIsland: View {
     }
     
     private var expandedWidth: CGFloat {
-        return PlayerControlTile.getWidth()
+        return PlayerControlTile.getWidth() + CalendarTile.getWidth()
     }
     
     private var expandedHeight: CGFloat {
-        return PlayerControlTile.getMinHeight()
+        return max(PlayerControlTile.getMinHeight(), CalendarTile.getMinHeight())
     }
     
     var body: some View {
@@ -65,6 +65,7 @@ private struct ExpandedView: View {
     
     var body: some View {
         HStack(spacing: 16) {
+            CalendarTile()
             PlayerControlTile(mediaController: mediaController, height: height)
         }
     }

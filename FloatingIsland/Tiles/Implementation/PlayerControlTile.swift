@@ -6,7 +6,7 @@ struct PlayerControlTile: View, TileProtocol {
     
     var body: some View {
         HStack(spacing: 16) {
-            if let title = mediaController.title {
+            if let _ = mediaController.title {
                 ArtworkView(artwork: mediaController.artwork, size: 60)
                 MediaControlsView(mediaController: mediaController)
             } else {
