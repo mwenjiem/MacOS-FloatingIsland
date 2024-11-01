@@ -12,6 +12,9 @@ struct FloatingIsland: View {
     @Binding var isExpanded: Bool
     @StateObject private var mediaController = MediaController()
     @State private var showingSettings = false
+    @State private var animationScale: CGFloat = 1.0
+    @State private var animationWidth: CGFloat = 1.0
+    @State private var animationHeight: CGFloat = 1.0
 
     // Calculate minimized width based on media state
     private var minimizedWidth: CGFloat {
@@ -31,27 +34,59 @@ struct FloatingIsland: View {
     }
     
     var body: some View {
-        ZStack {
-            if isExpanded {
-                ExpandedView(mediaController: mediaController, height: expandedHeight, isPinned: $isPinned, isExpanded: $isExpanded)
-                    .padding(EdgeInsets(top: 8, leading: 0, bottom: 16, trailing: 16))
-            } else {
-                MinimizedView(mediaController: mediaController)
-                    .padding(.vertical, 16)
+        Group {
+            ZStack {
+                if isExpanded {
+                    ExpandedView(mediaController: mediaController, height: expandedHeight, isPinned: $isPinned, isExpanded: $isExpanded)
+                        .padding(EdgeInsets(top: 8, leading: 0, bottom: 24, trailing: 24))
+                } else {
+                    MinimizedView(mediaController: mediaController)
+                        .padding(.vertical, 16)
+                }
             }
+            .padding(.top, isExpanded ? 20 : 0)
+            .frame(
+                width: isExpanded ? expandedWidth : minimizedWidth,
+                height: isExpanded ? expandedHeight : 38
+            )
+            .background(Color.black.opacity(1.0))
+            .clipShape(CustomRoundedShape())
         }
-        .padding(.top, isExpanded ? 20 : 0)
-        .frame(
-            width: isExpanded ? expandedWidth : minimizedWidth,
-            height: isExpanded ? expandedHeight : 38
-        )
-        .background(Color.black.opacity(1.0))
-        .clipShape(CustomRoundedShape())
+        .scaleEffect(x: animationWidth, y: animationHeight)
         .onTapGesture {
-            withAnimation(.spring()) {
-                isExpanded.toggle()
+            toggleExpansion()
+        }
+        .onChange(of: isExpanded) { newValue in
+            if newValue {
+                // Expanding animation
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                    animationWidth = 1.20
+                    animationHeight = 1.08
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) {
+                        animationWidth = 1.0
+                        animationHeight = 1.02
+                    }
+                }
+            } else {
+                // Collapsing animation
+                withAnimation(.spring(response: 0.3, dampingFraction: 0.75)) {
+                    animationWidth = 0.90
+                    animationHeight = 1.05
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) {
+                        animationWidth = 1.0
+                        animationHeight = 1.02
+                    }
+                }
             }
         }
+    }
+    
+    private func toggleExpansion() {
+        isExpanded.toggle()
     }
 }
 
@@ -104,10 +139,10 @@ private struct MinimizedView: View {
         HStack {
             if let _ = mediaController.title {
                 ArtworkView(artwork: mediaController.artwork, size: 30)
-                    .padding(.leading, 16)
+                    .padding(.leading, 24)
                 Spacer()
                 RotatingDisc(isPlaying: mediaController.isPlaying)
-                    .padding(.trailing, 16)
+                    .padding(.trailing, 24)
             } else {
                 Circle()
                     .fill(Color.green)
@@ -123,7 +158,7 @@ private struct MinimizedView: View {
 struct CustomRoundedShape: Shape {
     func path(in rect: CGRect) -> Path {
         var path = Path()
-        let cornerRadius: CGFloat = 8
+        let cornerRadius: CGFloat = 16
         
         // Top left - inward curve
         path.move(to: CGPoint(x: rect.minX, y: rect.minY))

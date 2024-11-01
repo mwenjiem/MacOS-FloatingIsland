@@ -86,8 +86,13 @@ class FloatingWindowController: NSWindowController {
     
     @objc private func updateWindowSize() {
         let fittingSize = hostingView.fittingSize
-        window?.setContentSize(fittingSize)
-        hostingView.frame.size = fittingSize
+        // Add animation for window resizing
+        NSAnimationContext.runAnimationGroup { context in
+            context.duration = 0.3
+            context.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+            window?.animator().setContentSize(fittingSize)
+            hostingView.animator().frame.size = fittingSize
+        }
         positionWindow()
     }
     
