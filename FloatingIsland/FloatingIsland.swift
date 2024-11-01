@@ -24,7 +24,12 @@ struct MediaInfo {
 }
 
 class MediaController: ObservableObject {
-    @Published var currentMedia: MediaInfo?
+    @Published var artwork: NSImage?
+    @Published var title: String?
+    @Published var artist: String?
+    @Published var isPlaying: Bool = false
+    @Published var duration: TimeInterval = .zero
+    @Published var currentPosition: TimeInterval = .zero
     
     init() {
         setupMediaRemote()
@@ -55,17 +60,17 @@ class MediaController: ObservableObject {
                     if let artworkData = info?["kMRMediaRemoteNowPlayingInfoArtworkData"] as? Data {
                         artwork = NSImage(data: artworkData)
                     }
-                    
-                    self?.currentMedia = MediaInfo(
-                        artwork: artwork,
-                        title: title,
-                        artist: info?["kMRMediaRemoteNowPlayingInfoArtist"] as? String,
-                        isPlaying: (info?["kMRMediaRemoteNowPlayingInfoPlaybackRate"] as? Double ?? 0) > 0,
-                        duration: info?["kMRMediaRemoteNowPlayingInfoDuration"] as? TimeInterval ?? 0,
-                        currentPosition: info?["kMRMediaRemoteNowPlayingInfoElapsedTime"] as? TimeInterval ?? 0
-                    )
-                } else {
-                    self?.currentMedia = nil
+                    if self?.title != title {
+                        self?.artwork = artwork
+                        self?.title = title
+                        self?.artist = info?["kMRMediaRemoteNowPlayingInfoArtist"] as? String
+                        self?.isPlaying = (info?["kMRMediaRemoteNowPlayingInfoPlaybackRate"] as? Double ?? 0) > 0
+                        self?.duration = info?["kMRMediaRemoteNowPlayingInfoDuration"] as? TimeInterval ?? 0
+                        self?.currentPosition = info?["kMRMediaRemoteNowPlayingInfoElapsedTime"] as? TimeInterval ?? 0
+                    } else {
+                        self?.isPlaying = (info?["kMRMediaRemoteNowPlayingInfoPlaybackRate"] as? Double ?? 0) > 0
+                        self?.currentPosition = info?["kMRMediaRemoteNowPlayingInfoElapsedTime"] as? TimeInterval ?? 0
+                    }
                 }
             }
         }
@@ -91,7 +96,7 @@ struct FloatingIsland: View {
     
     // Calculate minimized width based on media state
     private var minimizedWidth: CGFloat {
-        if mediaController.currentMedia != nil {
+        if mediaController.title != nil {
             return 340 // Width when media is playing
         } else {
             return 100 // Smaller width when no media
@@ -133,9 +138,9 @@ private struct ExpandedView: View {
     
     var body: some View {
         HStack(spacing: 16) {
-            if let media = mediaController.currentMedia {
-                ArtworkView(artwork: media.artwork, size: 60)
-                MediaControlsView(media: media, mediaController: mediaController)
+            if let title = mediaController.title {
+                ArtworkView(artwork: mediaController.artwork, size: 60)
+                MediaControlsView(mediaController: mediaController)
             } else {
                 NoMediaView()
             }
@@ -149,11 +154,11 @@ private struct MinimizedView: View {
     
     var body: some View {
         HStack {
-            if let media = mediaController.currentMedia {
-                ArtworkView(artwork: media.artwork, size: 30)
+            if let title = mediaController.title {
+                ArtworkView(artwork: mediaController.artwork, size: 30)
                     .padding(.leading, 16)
                 Spacer()
-                RotatingDisc(isPlaying: media.isPlaying)
+                RotatingDisc(isPlaying: mediaController.isPlaying)
                     .padding(.trailing, 16)
             } else {
                 Circle()
@@ -191,19 +196,18 @@ private struct ArtworkView: View {
 
 // Media controls and info view
 private struct MediaControlsView: View {
-    let media: MediaInfo
     @ObservedObject var mediaController: MediaController
     
     var body: some View {
         VStack(alignment: .center, spacing: 4) {
-            MediaInfoView(title: media.title, artist: media.artist)
+            MediaInfoView(title: mediaController.title!, artist: mediaController.artist)
             
             // Add progress bar
-            ProgressBar(currentPosition: media.currentPosition, duration: media.duration)
+            ProgressBar(currentPosition: mediaController.currentPosition, duration: mediaController.duration)
                 .padding(.vertical, 4)
             
             PlaybackControlsView(
-                isPlaying: media.isPlaying,
+                isPlaying: mediaController.isPlaying,
                 mediaController: mediaController
             )
         }
@@ -357,17 +361,6 @@ struct CustomRoundedShape: Shape {
         )
         
         // Top edge
-        path.addLine(to: CGPoint(x: rect.minX, y: rect.minY))
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        // Left edge
         path.addLine(to: CGPoint(x: rect.minX, y: rect.minY))
         
         return path
