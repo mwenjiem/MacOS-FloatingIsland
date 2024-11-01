@@ -30,6 +30,7 @@ class MediaController: ObservableObject {
     @Published var isPlaying: Bool = false
     @Published var duration: TimeInterval = .zero
     @Published var currentPosition: TimeInterval = .zero
+    var timer: Timer?
     
     init() {
         setupMediaRemote()
@@ -60,7 +61,7 @@ class MediaController: ObservableObject {
                     if let artworkData = info?["kMRMediaRemoteNowPlayingInfoArtworkData"] as? Data {
                         artwork = NSImage(data: artworkData)
                     }
-                    if self?.title != title {
+                    if self?.title != title { // avoid glitch caused by frequent updates
                         self?.artwork = artwork
                         self?.title = title
                         self?.artist = info?["kMRMediaRemoteNowPlayingInfoArtist"] as? String
@@ -69,10 +70,23 @@ class MediaController: ObservableObject {
                         self?.currentPosition = info?["kMRMediaRemoteNowPlayingInfoElapsedTime"] as? TimeInterval ?? 0
                     } else {
                         if self?.artwork == nil, artwork != nil {
-                            self?.artwork = artwork
+                            self?.artwork = artwork // backfill artwork if necessary
                         }
                         self?.isPlaying = (info?["kMRMediaRemoteNowPlayingInfoPlaybackRate"] as? Double ?? 0) > 0
                         self?.currentPosition = info?["kMRMediaRemoteNowPlayingInfoElapsedTime"] as? TimeInterval ?? 0
+                    }
+                    // Start a timer to update currentPosition every second
+                    self?.timer?.invalidate()
+                    self?.timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
+                        guard let self = self else {
+                            timer.invalidate()
+                            return
+                        }
+                        if self.isPlaying {
+                            self.currentPosition += 1
+                        } else {
+                            timer.invalidate()
+                        }
                     }
                 }
             }
@@ -122,7 +136,7 @@ struct FloatingIsland: View {
         }
         .padding(.top, isExpanded ? 20 : 0)
         .frame(
-            width: isExpanded ? 300 : minimizedWidth,
+            width: isExpanded ? 340 : minimizedWidth,
             height: isExpanded ? 160 : 38
         )
         .background(Color.black.opacity(1.0))
