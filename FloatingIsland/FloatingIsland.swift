@@ -19,6 +19,8 @@ struct MediaInfo {
     let title: String
     let artist: String?
     let isPlaying: Bool
+    let duration: TimeInterval
+    let currentPosition: TimeInterval
 }
 
 class MediaController: ObservableObject {
@@ -49,7 +51,6 @@ class MediaController: ObservableObject {
         MRMediaRemoteGetNowPlayingInfo(DispatchQueue.main) { [weak self] info in
             DispatchQueue.main.async {
                 if let title = info?["kMRMediaRemoteNowPlayingInfoTitle"] as? String {
-                    // Get artwork if available
                     var artwork: NSImage?
                     if let artworkData = info?["kMRMediaRemoteNowPlayingInfoArtworkData"] as? Data {
                         artwork = NSImage(data: artworkData)
@@ -59,7 +60,9 @@ class MediaController: ObservableObject {
                         artwork: artwork,
                         title: title,
                         artist: info?["kMRMediaRemoteNowPlayingInfoArtist"] as? String,
-                        isPlaying: (info?["kMRMediaRemoteNowPlayingInfoPlaybackRate"] as? Double ?? 0) > 0
+                        isPlaying: (info?["kMRMediaRemoteNowPlayingInfoPlaybackRate"] as? Double ?? 0) > 0,
+                        duration: info?["kMRMediaRemoteNowPlayingInfoDuration"] as? TimeInterval ?? 0,
+                        currentPosition: info?["kMRMediaRemoteNowPlayingInfoElapsedTime"] as? TimeInterval ?? 0
                     )
                 } else {
                     self?.currentMedia = nil
@@ -112,7 +115,7 @@ struct FloatingIsland: View {
         .padding(.top, isExpanded ? 20 : 0)
         .frame(
             width: isExpanded ? 300 : minimizedWidth,
-            height: isExpanded ? 120 : 38
+            height: isExpanded ? 160 : 38
         )
         .background(Color.black.opacity(1.0))
         .clipShape(CustomRoundedShape())
@@ -194,6 +197,11 @@ private struct MediaControlsView: View {
     var body: some View {
         VStack(alignment: .center, spacing: 4) {
             MediaInfoView(title: media.title, artist: media.artist)
+            
+            // Add progress bar
+            ProgressBar(currentPosition: media.currentPosition, duration: media.duration)
+                .padding(.vertical, 4)
+            
             PlaybackControlsView(
                 isPlaying: media.isPlaying,
                 mediaController: mediaController
@@ -397,5 +405,55 @@ private struct RotatingDisc: View {
                     }
                 }
             }
+    }
+}
+
+// Add new ProgressBar component
+private struct ProgressBar: View {
+    let currentPosition: TimeInterval
+    let duration: TimeInterval
+    
+    private var progress: Double {
+        guard duration > 0 else { return 0 }
+        return currentPosition / duration
+    }
+    
+    private func formatTime(_ time: TimeInterval) -> String {
+        let minutes = Int(time) / 60
+        let seconds = Int(time) % 60
+        return String(format: "%d:%02d", minutes, seconds)
+    }
+    
+    var body: some View {
+        VStack(spacing: 4) {
+            // Progress bar
+            GeometryReader { geometry in
+                ZStack(alignment: .leading) {
+                    // Background
+                    Rectangle()
+                        .fill(Color.gray.opacity(0.3))
+                        .frame(height: 2)
+                    
+                    // Progress
+                    Rectangle()
+                        .fill(Color.white)
+                        .frame(width: geometry.size.width * progress, height: 2)
+                }
+            }
+            .frame(height: 2)
+            
+            // Time labels
+            HStack {
+                Text(formatTime(currentPosition))
+                    .font(.system(size: 10))
+                    .foregroundColor(.gray)
+                
+                Spacer()
+                
+                Text(formatTime(duration))
+                    .font(.system(size: 10))
+                    .foregroundColor(.gray)
+            }
+        }
     }
 }
