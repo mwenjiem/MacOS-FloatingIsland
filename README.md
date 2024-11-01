@@ -36,7 +36,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - Inspired by Apple's Dynamic Island on iOS
 - Built with SwiftUI and AppKit
-- Icons provided by [SF Symbols](https://developer.apple.com/sf-symbols/)
 
 ---
 
