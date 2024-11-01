@@ -68,6 +68,9 @@ class MediaController: ObservableObject {
                         self?.duration = info?["kMRMediaRemoteNowPlayingInfoDuration"] as? TimeInterval ?? 0
                         self?.currentPosition = info?["kMRMediaRemoteNowPlayingInfoElapsedTime"] as? TimeInterval ?? 0
                     } else {
+                        if self?.artwork == nil, artwork != nil {
+                            self?.artwork = artwork
+                        }
                         self?.isPlaying = (info?["kMRMediaRemoteNowPlayingInfoPlaybackRate"] as? Double ?? 0) > 0
                         self?.currentPosition = info?["kMRMediaRemoteNowPlayingInfoElapsedTime"] as? TimeInterval ?? 0
                     }
