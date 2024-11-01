@@ -150,6 +150,8 @@ private struct MinimizedView: View {
                 ArtworkView(artwork: media.artwork, size: 30)
                     .padding(.leading, 16)
                 Spacer()
+                RotatingDisc(isPlaying: media.isPlaying)
+                    .padding(.trailing, 16)
             } else {
                 Circle()
                     .fill(Color.green)
@@ -361,5 +363,39 @@ struct CustomRoundedShape: Shape {
         path.addLine(to: CGPoint(x: rect.minX, y: rect.minY))
         
         return path
+    }
+}
+
+// Add this new component for the rotating disc
+private struct RotatingDisc: View {
+    let isPlaying: Bool
+    
+    @State private var rotation: Double = 0
+    
+    var body: some View {
+        Image(systemName: "record.circle")
+            .resizable()
+            .frame(width: 20, height: 20)
+            .foregroundColor(.white)
+            .rotationEffect(.degrees(rotation))
+            .onAppear {
+                if isPlaying {
+                    withAnimation(.linear(duration: 3).repeatForever(autoreverses: false)) {
+                        rotation = 360
+                    }
+                }
+            }
+            .onChange(of: isPlaying) { newValue in
+                if newValue {
+                    withAnimation(.linear(duration: 3).repeatForever(autoreverses: false)) {
+                        rotation = 360
+                    }
+                } else {
+                    withAnimation(.none) {
+                        // Keep current rotation but stop animating
+                        rotation = rotation.truncatingRemainder(dividingBy: 360)
+                    }
+                }
+            }
     }
 }
