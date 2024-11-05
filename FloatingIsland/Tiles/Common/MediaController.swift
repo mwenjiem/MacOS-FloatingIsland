@@ -22,11 +22,8 @@ class MediaController: ObservableObject {
     @Published var currentPosition: TimeInterval = .zero
     var timer: Timer?
     
-    private var positionUpdateTimer: Timer?
-    
     init() {
         setupMediaRemote()
-        setupPositionUpdateTimer()
     }
     
     private func setupMediaRemote() {
@@ -76,6 +73,19 @@ class MediaController: ObservableObject {
                         self?.isPlaying = (info?["kMRMediaRemoteNowPlayingInfoPlaybackRate"] as? Double ?? 0) > 0
                         self?.currentPosition = info?["kMRMediaRemoteNowPlayingInfoElapsedTime"] as? TimeInterval ?? 0
                     }
+                    // Start a timer to update currentPosition every second
+                    self?.timer?.invalidate()
+                    self?.timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
+                        guard let self = self else {
+                            timer.invalidate()
+                            return
+                        }
+                        if self.isPlaying {
+                            self.currentPosition += 1
+                        } else {
+                            timer.invalidate()
+                        }
+                    }
                 }
             }
         }
@@ -92,34 +102,4 @@ class MediaController: ObservableObject {
     func previousTrack() {
         MRMediaRemoteSendCommand(kMRPreviousTrack, nil)
     }
-    
-    private func setupPositionUpdateTimer() {
-        // Invalidate existing timer if any
-        positionUpdateTimer?.invalidate()
-        
-        // Create new timer that fires every second
-        positionUpdateTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
-            guard let self = self, self.isPlaying else { return }
-            self.updatePosition()
-        }
-    }
-    
-    private func updatePosition() {
-        // Get current playback position from MediaRemote
-        MRMediaRemoteGetNowPlayingInfo(DispatchQueue.main) { [weak self] info in
-            if let info = info as? [String: Any] {
-                DispatchQueue.main.async {
-                    if let position = info["kMRMediaRemoteNowPlayingInfoElapsedTime"] as? TimeInterval {
-                        self?.currentPosition = position
-                    }
-                }
-                
-            }
-        }
-    }
-        
-    deinit {
-        positionUpdateTimer?.invalidate()
-    }
 }
-
