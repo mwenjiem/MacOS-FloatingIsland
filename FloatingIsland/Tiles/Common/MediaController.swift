@@ -20,7 +20,10 @@ class MediaController: ObservableObject {
     @Published var isPlaying: Bool = false
     @Published var duration: TimeInterval = .zero
     @Published var currentPosition: TimeInterval = .zero
+    @Published var playbackRate: Double = 0.0
+    
     var timer: Timer?
+    var lastUpdateTime = Date()
     
     init() {
         setupMediaRemote()
@@ -59,29 +62,35 @@ class MediaController: ObservableObject {
                     if let artworkData = info?["kMRMediaRemoteNowPlayingInfoArtworkData"] as? Data {
                         artwork = NSImage(data: artworkData)
                     }
+                    var currentPosition = 0.0
                     if self?.title != title { // avoid glitch caused by frequent updates
                         self?.artwork = artwork
                         self?.title = title
                         self?.artist = info?["kMRMediaRemoteNowPlayingInfoArtist"] as? String
                         self?.isPlaying = (info?["kMRMediaRemoteNowPlayingInfoPlaybackRate"] as? Double ?? 0) > 0
                         self?.duration = info?["kMRMediaRemoteNowPlayingInfoDuration"] as? TimeInterval ?? 0
-                        self?.currentPosition = info?["kMRMediaRemoteNowPlayingInfoElapsedTime"] as? TimeInterval ?? 0
+                        currentPosition = info?["kMRMediaRemoteNowPlayingInfoElapsedTime"] as? TimeInterval ?? 0
                     } else {
                         if self?.artwork == nil, artwork != nil {
                             self?.artwork = artwork // backfill artwork if necessary
                         }
                         self?.isPlaying = (info?["kMRMediaRemoteNowPlayingInfoPlaybackRate"] as? Double ?? 0) > 0
-                        self?.currentPosition = info?["kMRMediaRemoteNowPlayingInfoElapsedTime"] as? TimeInterval ?? 0
+                        currentPosition = info?["kMRMediaRemoteNowPlayingInfoElapsedTime"] as? TimeInterval ?? 0
+                        self?.playbackRate = info?["kMRMediaRemoteNowPlayingInfoPlaybackRate"] as? Double ?? 0.0
                     }
+                    self?.lastUpdateTime = Date()
                     // Start a timer to update currentPosition every second
                     self?.timer?.invalidate()
-                    self?.timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
+                    
+                    self?.timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [self] timer in
                         guard let self = self else {
                             timer.invalidate()
                             return
                         }
                         if self.isPlaying {
-                            self.currentPosition += 1
+                            let timeDifference = Date().timeIntervalSince(self.lastUpdateTime)
+                            self.currentPosition = currentPosition + timeDifference * self.playbackRate
+                            self.currentPosition = min(self.currentPosition, self.duration)
                         } else {
                             timer.invalidate()
                         }
