@@ -208,7 +208,7 @@ private struct RotatingDisc: View {
     @State private var rotation: Double = 0
     
     var body: some View {
-        Image(systemName: "record.circle")
+        Image(systemName: "opticaldisc")
             .resizable()
             .frame(width: 20, height: 20)
             .foregroundColor(.white)
