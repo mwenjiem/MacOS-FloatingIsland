@@ -53,9 +53,6 @@ struct FloatingIsland: View {
             .clipShape(CustomRoundedShape())
         }
         .scaleEffect(x: animationWidth, y: animationHeight)
-        .onTapGesture {
-            toggleExpansion()
-        }
         .onChange(of: isExpanded) { newValue in
             if newValue {
                 // Expanding animation
@@ -83,10 +80,6 @@ struct FloatingIsland: View {
                 }
             }
         }
-    }
-    
-    private func toggleExpansion() {
-        isExpanded.toggle()
     }
 }
 
