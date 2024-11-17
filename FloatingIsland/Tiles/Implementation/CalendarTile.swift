@@ -117,19 +117,25 @@ struct EventRow: View {
             openEventInCalendar(event)
         }) {
             VStack(alignment: .leading, spacing: 4) {
-                Text(event.title)
-                    .font(.subheadline)
-                    .foregroundColor(.white)
-                    .lineLimit(1)
+                HStack(spacing: 6) {
+                    Circle()
+                        .fill(Color(event.calendar.cgColor))
+                        .frame(width: 8, height: 8)
+                    
+                    Text(event.title)
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundColor(.white)
+                        .lineLimit(1)
+                }
                 
-                HStack {
+                HStack(spacing: 8) {
                     Text(formatEventTime(event))
-                        .font(.caption)
+                        .font(.system(size: 11))
                         .foregroundColor(.gray)
                     
                     if let location = event.location, !location.isEmpty {
                         Text("• \(location)")
-                            .font(.caption)
+                            .font(.system(size: 11))
                             .foregroundColor(.gray)
                             .lineLimit(1)
                     }
@@ -137,7 +143,7 @@ struct EventRow: View {
             }
         }
         .buttonStyle(PlainButtonStyle())
-        .contentShape(Rectangle()) // Makes entire row clickable
+        .contentShape(Rectangle())
         .hover { isHovered in
             if isHovered {
                 NSCursor.pointingHand.push()
@@ -148,15 +154,17 @@ struct EventRow: View {
     }
     
     private func openEventInCalendar(_ event: EKEvent) {
-        // Open the Calendar app
-        if let url = URL(string: "x-apple-calendar://") {
-            NSWorkspace.shared.open(url)
+        // Open the Calendar app using its bundle identifier
+        if let calendarURL = NSWorkspace.shared.urlForApplication(withBundleIdentifier: "com.apple.iCal") {
+            NSWorkspace.shared.openApplication(at: calendarURL, 
+                                            configuration: NSWorkspace.OpenConfiguration(),
+                                            completionHandler: nil)
         }
     }
     
     private func formatEventTime(_ event: EKEvent) -> String {
         let formatter = DateFormatter()
-        formatter.dateStyle = .short
+        formatter.dateStyle = Calendar.current.isDateInToday(event.startDate) ? .none : .short
         formatter.timeStyle = .short
         return formatter.string(from: event.startDate)
     }
