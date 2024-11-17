@@ -12,8 +12,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var mouseTrackingTimer: Timer?
     let triggerHeight: CGFloat = 30
     var isWindowVisible = false
+    var statusItem: NSStatusItem?
     
     func applicationDidFinishLaunching(_ notification: Notification) {
+        setupStatusBarItem()
+        
         floatingWindowController = FloatingWindowController()
         NSApp.setActivationPolicy(.accessory)
         
@@ -22,6 +25,24 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         floatingWindowController?.isExpanded = false
         
         startMouseTracking()
+    }
+    
+    private func setupStatusBarItem() {
+        statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
+        
+        if let button = statusItem?.button {
+            if let image = NSImage(systemSymbolName: "menubar.dock.rectangle", accessibilityDescription: "FloatingIsland") {
+                image.isTemplate = true
+                button.image = image
+            }
+            
+            let menu = NSMenu()
+            menu.addItem(NSMenuItem(title: "Quit FloatingIsland", 
+                                  action: #selector(NSApplication.terminate(_:)), 
+                                  keyEquivalent: "q"))
+            
+            statusItem?.menu = menu
+        }
     }
     
     private func startMouseTracking() {

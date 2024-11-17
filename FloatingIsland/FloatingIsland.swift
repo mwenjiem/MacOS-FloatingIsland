@@ -95,21 +95,6 @@ private struct ExpandedView: View {
             HStack {
                 Spacer()
                 Button(action: {
-                    NSApplication.shared.terminate(nil)
-                }) {
-                    Image(systemName: "power")
-                        .foregroundColor(.gray)
-                        .frame(width: 16, height: 16)
-                }
-                .buttonStyle(.plain)
-            }
-            HStack(spacing: 0) {
-                CalendarTile()
-                PlayerControlTile(mediaController: mediaController, height: height)
-            }.padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 16))
-            HStack {
-                Spacer()
-                Button(action: {
                     withAnimation {
                         isPinned.toggle()
                     }
@@ -120,6 +105,13 @@ private struct ExpandedView: View {
                 }
                 .buttonStyle(.plain)
             }
+            .padding(.trailing, 16)
+            
+            HStack(spacing: 0) {
+                CalendarTile()
+                PlayerControlTile(mediaController: mediaController, height: height)
+            }
+            .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 16))
         }
     }
 }
