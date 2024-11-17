@@ -163,10 +163,24 @@ struct EventRow: View {
     }
     
     private func formatEventTime(_ event: EKEvent) -> String {
+        let calendar = Calendar.current
         let formatter = DateFormatter()
-        formatter.dateStyle = Calendar.current.isDateInToday(event.startDate) ? .none : .short
         formatter.timeStyle = .short
-        return formatter.string(from: event.startDate)
+        
+        if calendar.isDateInToday(event.startDate) {
+            return "Today, " + formatter.string(from: event.startDate)
+        } else if calendar.isDateInTomorrow(event.startDate) {
+            return "Tomorrow, " + formatter.string(from: event.startDate)
+        } else {
+            let days = calendar.dateComponents([.day], from: Date(), to: event.startDate).day ?? 0
+            if days < 7 {
+                formatter.dateFormat = "EEEE" // Day name (e.g., "Monday")
+                return formatter.string(from: event.startDate) + ", " + formatter.string(from: event.startDate)
+            } else {
+                formatter.dateStyle = .short
+                return formatter.string(from: event.startDate)
+            }
+        }
     }
 }
 
