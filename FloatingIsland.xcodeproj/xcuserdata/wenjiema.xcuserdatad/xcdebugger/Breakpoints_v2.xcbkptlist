@@ -7,16 +7,32 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "F1E93F44-E469-484D-9477-8F9B9DB9F96C"
+            uuid = "F46FEF88-6A2F-4BE5-A123-D5470F027799"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "FloatingIsland/Tiles/Common/MediaController.swift"
+            filePath = "FloatingIsland/AppDelegate.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "82"
-            endingLineNumber = "82"
-            landmarkName = "updateNowPlayingInfo()"
+            startingLineNumber = "89"
+            endingLineNumber = "89"
+            landmarkName = "setupStatusBarItem()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "912BF031-3AFE-4480-B1E2-4BEA0FBFCD9C"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "FloatingIsland/AppDelegate.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "70"
+            endingLineNumber = "70"
+            landmarkName = "expansionStateChanged(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

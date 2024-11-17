@@ -12,10 +12,9 @@ struct FloatingIsland: View {
     @Binding var isExpanded: Bool
     @StateObject private var mediaController = MediaController()
     @State private var showingSettings = false
-    @State private var animationScale: CGFloat = 1.0
     @State private var animationWidth: CGFloat = 1.0
     @State private var animationHeight: CGFloat = 1.0
-
+    
     // Calculate minimized width based on media state
     private var minimizedWidth: CGFloat {
         if mediaController.title != nil {
@@ -38,7 +37,7 @@ struct FloatingIsland: View {
             ZStack {
                 if isExpanded {
                     ExpandedView(mediaController: mediaController, height: expandedHeight, isPinned: $isPinned, isExpanded: $isExpanded)
-                        .padding(EdgeInsets(top: 8, leading: 0, bottom: 24, trailing: 24))
+                        .padding(EdgeInsets(top: 8, leading: 0, bottom: 16, trailing: 16))
                 } else {
                     MinimizedView(mediaController: mediaController)
                         .padding(.vertical, 16)
@@ -51,9 +50,23 @@ struct FloatingIsland: View {
             )
             .background(Color.black.opacity(1.0))
             .clipShape(CustomRoundedShape())
+            .onTapGesture {
+                let requireClickToExpand = UserDefaults.standard.bool(forKey: "requireClickToExpand")
+                if requireClickToExpand && !isExpanded {
+                    withAnimation(.spring()) {
+                        isExpanded = true
+                    }
+                }
+            }
         }
         .scaleEffect(x: animationWidth, y: animationHeight)
         .onChange(of: isExpanded) { newValue in
+            // Notify expansion state change
+            NotificationCenter.default.post(
+                name: NSNotification.Name("ExpansionStateChanged"),
+                object: newValue
+            )
+            
             if newValue {
                 // Expanding animation
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
