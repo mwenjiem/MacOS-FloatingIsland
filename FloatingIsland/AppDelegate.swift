@@ -41,6 +41,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             name: UserDefaults.didChangeNotification,
             object: nil
         )
+        settingsChanged()
     }
     
     @objc private func settingsChanged() {

@@ -10,8 +10,8 @@ import SwiftUI
 struct FloatingIsland: View {
     @Binding var isPinned: Bool
     @Binding var isExpanded: Bool
-    @StateObject private var mediaController = MediaController()
-    @StateObject private var calendarController = CalendarController()
+    @StateObject var mediaController: MediaController
+    @StateObject var calendarController: CalendarController
     @State private var showingSettings = false
     @State private var animationWidth: CGFloat = 1.0
     @State private var animationHeight: CGFloat = 1.0
@@ -25,12 +25,25 @@ struct FloatingIsland: View {
         }
     }
     
+    private var hasCalendarEvents: Bool {
+        return calendarController.events.count > 0
+    }
+    
     private var expandedWidth: CGFloat {
-        return PlayerControlTile.getWidth() + CalendarTile.getWidth()
+        var expandedWidth = PlayerControlTile.getWidth()
+        if hasCalendarEvents {
+            expandedWidth += CalendarTile.getWidth()
+        }
+        return expandedWidth
     }
     
     private var expandedHeight: CGFloat {
-        return max(PlayerControlTile.getMinHeight(), CalendarTile.getMinHeight()) + 32
+        var expandedHeight = PlayerControlTile.getMinHeight()
+        if hasCalendarEvents {
+            expandedHeight = max(expandedHeight, CalendarTile.getMinHeight())
+        }
+        
+        return expandedHeight + 32
     }
     
     var body: some View {
@@ -123,7 +136,9 @@ private struct ExpandedView: View {
             .padding(.trailing, 16)
             
             HStack(spacing: 0) {
-                CalendarTile(calendarController: calendarController)
+                if calendarController.events.count > 0 {
+                    CalendarTile(calendarController: calendarController)
+                }
                 PlayerControlTile(mediaController: mediaController, height: height)
             }
             .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 16))
@@ -241,7 +256,9 @@ struct FloatingIsland_Previews: PreviewProvider {
         // Preview for expanded state
         FloatingIsland(
             isPinned: .constant(false),
-            isExpanded: .constant(true)
+            isExpanded: .constant(true),
+            mediaController: MediaController(),
+            calendarController: CalendarController()
         )
         .frame(width: 600, height: 300)
         .previewDisplayName("Expanded")
@@ -249,7 +266,9 @@ struct FloatingIsland_Previews: PreviewProvider {
         // Preview for minimized state
         FloatingIsland(
             isPinned: .constant(false),
-            isExpanded: .constant(false)
+            isExpanded: .constant(false),
+            mediaController: MediaController(),
+            calendarController: CalendarController()
         )
         .frame(width: 340, height: 38)
         .previewDisplayName("Minimized")
@@ -261,6 +280,7 @@ struct ExpandedView_Previews: PreviewProvider {
     static var previews: some View {
         ExpandedView(
             mediaController: MediaController(),
+            calendarController: CalendarController(),
             height: 160,
             isPinned: .constant(false),
             isExpanded: .constant(true)

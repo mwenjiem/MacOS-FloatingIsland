@@ -12,6 +12,10 @@ class CalendarController: ObservableObject {
     @Published var events: [EKEvent] = []
     @Published var hasCalendarAccess = false
     
+    init() {
+        checkCalendarAuthorizationStatus()
+    }
+    
     public func checkCalendarAuthorizationStatus() {
         let status = EKEventStore.authorizationStatus(for: .event)
         switch status {
