@@ -11,6 +11,7 @@ struct FloatingIsland: View {
     @Binding var isPinned: Bool
     @Binding var isExpanded: Bool
     @StateObject private var mediaController = MediaController()
+    @StateObject private var calendarController = CalendarController()
     @State private var showingSettings = false
     @State private var animationWidth: CGFloat = 1.0
     @State private var animationHeight: CGFloat = 1.0
@@ -36,7 +37,7 @@ struct FloatingIsland: View {
         Group {
             ZStack {
                 if isExpanded {
-                    ExpandedView(mediaController: mediaController, height: expandedHeight, isPinned: $isPinned, isExpanded: $isExpanded)
+                    ExpandedView(mediaController: mediaController, calendarController: calendarController, height: expandedHeight, isPinned: $isPinned, isExpanded: $isExpanded)
                         .padding(EdgeInsets(top: 8, leading: 0, bottom: 16, trailing: 16))
                 } else {
                     MinimizedView(mediaController: mediaController)
@@ -99,6 +100,7 @@ struct FloatingIsland: View {
 // Expanded view with all controls
 private struct ExpandedView: View {
     @ObservedObject var mediaController: MediaController
+    @ObservedObject var calendarController: CalendarController
     var height: CGFloat
     @Binding var isPinned: Bool
     @Binding var isExpanded: Bool
@@ -121,7 +123,7 @@ private struct ExpandedView: View {
             .padding(.trailing, 16)
             
             HStack(spacing: 0) {
-                CalendarTile()
+                CalendarTile(calendarController: calendarController)
                 PlayerControlTile(mediaController: mediaController, height: height)
             }
             .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 16))

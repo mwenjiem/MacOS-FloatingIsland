@@ -9,9 +9,7 @@ import SwiftUI
 import EventKit
 
 struct CalendarTile: View, TileProtocol {
-    @State private var events: [EKEvent] = []
-    @State private var hasCalendarAccess = false
-    private let eventStore = EKEventStore()
+    @ObservedObject var calendarController: CalendarController
     
     static func getWidth() -> CGFloat {
         170
@@ -32,8 +30,8 @@ struct CalendarTile: View, TileProtocol {
             }
             .padding(.horizontal)
             
-            if hasCalendarAccess {
-                if events.isEmpty {
+            if calendarController.hasCalendarAccess {
+                if calendarController.events.isEmpty {
                     Text("No upcoming events")
                         .font(.subheadline)
                         .foregroundColor(.gray)
@@ -41,7 +39,7 @@ struct CalendarTile: View, TileProtocol {
                 } else {
                     ScrollView {
                         VStack(alignment: .leading, spacing: 8) {
-                            ForEach(Array(events.prefix(5).enumerated()), id: \.offset) { index, event in
+                            ForEach(Array(calendarController.events.prefix(5).enumerated()), id: \.offset) { index, event in
                                 EventRow(event: event)
                             }
                         }
@@ -50,7 +48,7 @@ struct CalendarTile: View, TileProtocol {
                 }
             } else {
                 Button("Grant Calendar Access") {
-                    requestCalendarAccess()
+                    calendarController.requestCalendarAccess()
                 }
                 .buttonStyle(.plain)
                 .foregroundColor(.blue)
@@ -60,51 +58,7 @@ struct CalendarTile: View, TileProtocol {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.black.opacity(1.0))
         .onAppear {
-            checkCalendarAuthorizationStatus()
-        }
-    }
-    
-    private func checkCalendarAuthorizationStatus() {
-        let status = EKEventStore.authorizationStatus(for: .event)
-        switch status {
-        case .authorized:
-            hasCalendarAccess = true
-            loadEvents()
-        case .notDetermined:
-            requestCalendarAccess()
-        default:
-            hasCalendarAccess = false
-        }
-    }
-    
-    private func requestCalendarAccess() {
-        eventStore.requestAccess(to: .event) { granted, error in
-            DispatchQueue.main.async {
-                hasCalendarAccess = granted
-                if granted {
-                    loadEvents()
-                }
-            }
-        }
-    }
-    
-    private func loadEvents() {
-        let calendars = eventStore.calendars(for: .event)
-        
-        let now = Date()
-        let endDate = Calendar.current.date(byAdding: .day, value: 7, to: now)!
-        
-        let predicate = eventStore.predicateForEvents(
-            withStart: now,
-            end: endDate,
-            calendars: calendars
-        )
-        
-        let fetchedEvents = eventStore.events(matching: predicate)
-            .sorted { $0.startDate < $1.startDate }
-        
-        DispatchQueue.main.async {
-            self.events = fetchedEvents
+            calendarController.checkCalendarAuthorizationStatus()
         }
     }
 }
@@ -198,7 +152,7 @@ struct CalendarTile_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             // Preview with no calendar access
-            CalendarTile()
+            CalendarTile(calendarController: CalendarController())
                 .frame(width: CalendarTile.getWidth(), height: CalendarTile.getMinHeight())
                 .previewDisplayName("No Access")
             
