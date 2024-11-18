@@ -6,7 +6,7 @@
 //
 import EventKit
 
-class CalendarController: ObservableObject {
+class CalendarViewModel: ObservableObject {
     private let eventStore = EKEventStore()
 
     @Published var events: [EKEvent] = []

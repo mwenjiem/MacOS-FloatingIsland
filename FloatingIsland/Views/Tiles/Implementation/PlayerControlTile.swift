@@ -1,14 +1,14 @@
 import SwiftUI
 
 struct PlayerControlTile: View, TileProtocol {
-    @ObservedObject var mediaController: MediaController
+    @ObservedObject var mediaViewModel: MediaViewModel
     var height: CGFloat
     
     var body: some View {
         HStack(spacing: 16) {
-            if let _ = mediaController.title {
-                ArtworkView(artwork: mediaController.artwork, size: 60)
-                MediaControlsView(mediaController: mediaController)
+            if let _ = mediaViewModel.title {
+                ArtworkView(artwork: mediaViewModel.artwork, size: 60)
+                MediaControlsView(mediaViewModel: mediaViewModel)
             } else {
                 NoMediaView()
             }
@@ -25,19 +25,19 @@ struct PlayerControlTile: View, TileProtocol {
 
     // Media controls and info view
     private struct MediaControlsView: View {
-        @ObservedObject var mediaController: MediaController
+        @ObservedObject var mediaViewModel: MediaViewModel
         
         var body: some View {
             VStack(alignment: .center, spacing: 4) {
-                MediaInfoView(title: mediaController.title!, artist: mediaController.artist)
+                MediaInfoView(title: mediaViewModel.title!, artist: mediaViewModel.artist)
                 
                 // Add progress bar
-                ProgressBar(currentPosition: mediaController.currentPosition, duration: mediaController.duration)
+                ProgressBar(currentPosition: mediaViewModel.currentPosition, duration: mediaViewModel.duration)
                     .padding(.vertical, 4)
                 
                 PlaybackControlsView(
-                    isPlaying: mediaController.isPlaying,
-                    mediaController: mediaController
+                    isPlaying: mediaViewModel.isPlaying,
+                    mediaViewModel: mediaViewModel
                 )
             }
             .frame(maxWidth: .infinity)
@@ -71,23 +71,23 @@ struct PlayerControlTile: View, TileProtocol {
     // Playback controls view
     private struct PlaybackControlsView: View {
         let isPlaying: Bool
-        @ObservedObject var mediaController: MediaController
+        @ObservedObject var mediaViewModel: MediaViewModel
         
         var body: some View {
             HStack(alignment: .center, spacing: 20) {
                 MediaControlButton(
                     systemName: "backward.fill",
-                    action: mediaController.previousTrack
+                    action: mediaViewModel.previousTrack
                 )
                 
                 MediaControlButton(
                     systemName: isPlaying ? "pause.fill" : "play.fill",
-                    action: mediaController.togglePlayPause
+                    action: mediaViewModel.togglePlayPause
                 )
                 
                 MediaControlButton(
                     systemName: "forward.fill",
-                    action: mediaController.nextTrack
+                    action: mediaViewModel.nextTrack
                 )
             }
             .frame(maxWidth: .infinity)
@@ -181,14 +181,14 @@ struct PlayerControlTile_Previews: PreviewProvider {
         Group {
             // Preview with no media playing
             PlayerControlTile(
-                mediaController: MockMediaController(hasMedia: false),
+                mediaViewModel: MockMediaViewModel(hasMedia: false),
                 height: PlayerControlTile.getMinHeight()
             )
             .previewDisplayName("No Media")
             
             // Preview with media playing
             PlayerControlTile(
-                mediaController: MockMediaController(
+                mediaViewModel: MockMediaViewModel(
                     hasMedia: true,
                     isPlaying: true,
                     title: "Never Gonna Give You Up",
@@ -202,7 +202,7 @@ struct PlayerControlTile_Previews: PreviewProvider {
             
             // Preview with media paused
             PlayerControlTile(
-                mediaController: MockMediaController(
+                mediaViewModel: MockMediaViewModel(
                     hasMedia: true,
                     isPlaying: false,
                     title: "Bohemian Rhapsody",
@@ -220,7 +220,7 @@ struct PlayerControlTile_Previews: PreviewProvider {
 }
 
 // Mock MediaController for previews
-private class MockMediaController: MediaController {
+private class MockMediaViewModel: MediaViewModel {
     init(
         hasMedia: Bool = false,
         isPlaying: Bool = false,

@@ -1,5 +1,5 @@
 //
-//  MediaController.swift
+//  MediaViewModel.swift
 //  FloatingIsland
 //
 //  Created by Wenjie Ma on 11/1/24.
@@ -13,7 +13,7 @@ private let kMRTogglePlayPause: UInt32 = 2
 private let kMRNextTrack: UInt32 = 4
 private let kMRPreviousTrack: UInt32 = 5
 
-class MediaController: ObservableObject {
+class MediaViewModel: ObservableObject {
     @Published var artwork: NSImage?
     @Published var title: String?
     @Published var artist: String?

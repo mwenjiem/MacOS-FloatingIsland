@@ -9,7 +9,7 @@ import SwiftUI
 import EventKit
 
 struct CalendarTile: View, TileProtocol {
-    @ObservedObject var calendarController: CalendarController
+    @ObservedObject var calendarViewModel: CalendarViewModel
     
     static func getWidth() -> CGFloat {
         170
@@ -30,8 +30,8 @@ struct CalendarTile: View, TileProtocol {
             }
             .padding(.horizontal)
             
-            if calendarController.hasCalendarAccess {
-                if calendarController.events.isEmpty {
+            if calendarViewModel.hasCalendarAccess {
+                if calendarViewModel.events.isEmpty {
                     Text("No upcoming events")
                         .font(.subheadline)
                         .foregroundColor(.gray)
@@ -39,7 +39,7 @@ struct CalendarTile: View, TileProtocol {
                 } else {
                     ScrollView {
                         VStack(alignment: .leading, spacing: 8) {
-                            ForEach(Array(calendarController.events.prefix(5).enumerated()), id: \.offset) { index, event in
+                            ForEach(Array(calendarViewModel.events.prefix(5).enumerated()), id: \.offset) { index, event in
                                 EventRow(event: event)
                             }
                         }
@@ -48,7 +48,7 @@ struct CalendarTile: View, TileProtocol {
                 }
             } else {
                 Button("Grant Calendar Access") {
-                    calendarController.requestCalendarAccess()
+                    calendarViewModel.requestCalendarAccess()
                 }
                 .buttonStyle(.plain)
                 .foregroundColor(.blue)
@@ -58,7 +58,7 @@ struct CalendarTile: View, TileProtocol {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.black.opacity(1.0))
         .onAppear {
-            calendarController.checkCalendarAuthorizationStatus()
+            calendarViewModel.checkCalendarAuthorizationStatus()
         }
     }
 }
@@ -72,9 +72,11 @@ struct EventRow: View {
         }) {
             VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 6) {
-                    Circle()
-                        .fill(Color(event.calendar.cgColor))
-                        .frame(width: 8, height: 8)
+                    if event.calendar?.cgColor != nil {
+                        Circle()
+                            .fill(Color(event.calendar.cgColor))
+                            .frame(width: 8, height: 8)
+                    }
                     
                     Text(event.title)
                         .font(.system(size: 13, weight: .medium))
@@ -152,7 +154,7 @@ struct CalendarTile_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             // Preview with no calendar access
-            CalendarTile(calendarController: CalendarController())
+            CalendarTile(calendarViewModel: CalendarViewModel())
                 .frame(width: CalendarTile.getWidth(), height: CalendarTile.getMinHeight())
                 .previewDisplayName("No Access")
             

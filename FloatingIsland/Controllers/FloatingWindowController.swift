@@ -125,8 +125,8 @@ class FloatingWindowController: NSWindowController {
                 get: { [weak self] in self?.isExpanded ?? false },
                 set: { [weak self] in self?.isExpanded = $0 }
             ),
-            mediaController: MediaController(),
-            calendarController: CalendarController()
+            mediaViewModel: MediaViewModel(),
+            calendarViewModel: CalendarViewModel()
         )
         
         if hostingView == nil {
